@@ -1,0 +1,40 @@
+# Local planning — never pushed
+TODO.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+pip-wheel-metadata/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# cuddly runtime data
+*.db
+*.db-wal
+*.db-shm
+~/.cuddly/
+
+# Env
+.env
+.env.*
+
+# macOS
+.DS_Store
+
+# Node (Phase 2 web UI)
+node_modules/
+.next/
+web/.env.local

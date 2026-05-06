@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "cuddly": {
+      "command": "cuddly",
+      "args": ["serve", "--mcp"]
+    }
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "command": "cuddly index --file $CLAUDE_FILE_PATH --quiet"
+      }
+    ]
+  }
+}

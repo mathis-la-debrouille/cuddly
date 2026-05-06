@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cuddly"
+version = "0.1.0"
+description = "Local knowledge graph for AI coding agents"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+dependencies = [
+    "typer[all]>=0.12",
+    "rich>=13",
+    "tree-sitter>=0.23",
+    "tree-sitter-python>=0.23",
+    "sentence-transformers>=3",
+    "torch>=2.2",
+    "sqlite-vec>=0.1",
+    "tiktoken>=0.7",
+    "networkx>=3.3",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "mcp>=1.0",
+    "fastapi>=0.111",
+    "uvicorn>=0.29",
+    "watchdog>=4",
+    "structlog>=24",
+    "pathspec>=0.12",
+    "numpy>=1.26",
+]
+
+[project.scripts]
+cuddly = "cuddly.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cuddly"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["slow: marks tests that require model download (deselect with -m 'not slow')"]
+
+[tool.ruff]
+src = ["src"]
+target-version = "py311"
+line-length = 100
