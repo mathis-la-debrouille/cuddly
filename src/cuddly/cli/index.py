@@ -6,17 +6,17 @@ from typing import Optional
 import typer
 from rich.console import Console
 
-app = typer.Typer(help="Index a project or a single file.")
 console = Console()
 
 
-@app.callback(invoke_without_command=True)
 def index(
     path: Optional[Path] = typer.Argument(default=None, help="Project root to index (default: cwd)"),
     force: bool = typer.Option(False, "--force", "-f", help="Re-index all files, ignoring cached hashes"),
     file: Optional[Path] = typer.Option(None, "--file", help="Index a single file"),
     quiet: bool = typer.Option(False, "--quiet", "-q", help="Suppress all output"),
 ) -> None:
+    """Index a project or a single file."""
+    import logging
     from cuddly.config import get_config, setup_logging
     from cuddly.db.connection import get_connection
     from cuddly.db.migrations import apply_migrations
@@ -25,8 +25,13 @@ def index(
     from cuddly.graph.builder import build_graph, build_import_edges, save_graph
     from cuddly.indexer.indexer import index_file, index_project
 
-    if not quiet:
+    if quiet:
+        logging.disable(logging.CRITICAL)
+    else:
         setup_logging()
+        # Suppress noisy third-party loggers
+        for noisy in ("httpx", "httpcore", "sentence_transformers", "huggingface_hub"):
+            logging.getLogger(noisy).setLevel(logging.WARNING)
 
     config = get_config()
     conn = get_connection()
@@ -47,7 +52,6 @@ def index(
                 f"[green]Done.[/green] Indexed: {stats['indexed']} | "
                 f"Skipped: {stats['skipped']} | Errors: {stats['errors']}"
             )
-        # Build graph after full project index
         if not quiet:
             console.print("Building knowledge graph...")
         build_import_edges(conn)
@@ -55,4 +59,6 @@ def index(
         graph_path = config.db_path.parent / "graph.json"
         save_graph(g, graph_path)
         if not quiet:
-            console.print(f"[green]Graph saved:[/green] {g.number_of_nodes()} nodes, {g.number_of_edges()} edges")
+            console.print(
+                f"[green]Graph saved:[/green] {g.number_of_nodes()} nodes, {g.number_of_edges()} edges"
+            )

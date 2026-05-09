@@ -4,12 +4,11 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-app = typer.Typer(help="Show indexing statistics.")
 console = Console()
 
 
-@app.callback(invoke_without_command=True)
 def stats() -> None:
+    """Show indexing statistics."""
     from cuddly.config import get_config
     from cuddly.db.connection import get_connection
     from cuddly.db.schema import create_schema

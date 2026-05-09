@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import Optional
 
 import typer
@@ -7,16 +8,18 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 
-app = typer.Typer(help="Search the codebase semantically.")
 console = Console()
 
 
-@app.callback(invoke_without_command=True)
 def search(
     query: str = typer.Argument(help="Natural language search query"),
     top_k: int = typer.Option(10, "--top-k", "-k", help="Number of results"),
     file_filter: Optional[str] = typer.Option(None, "--filter", "-f", help="Glob pattern to filter files"),
 ) -> None:
+    """Search the codebase semantically."""
+    for noisy in ("httpx", "httpcore", "sentence_transformers", "huggingface_hub"):
+        logging.getLogger(noisy).setLevel(logging.WARNING)
+
     from cuddly.db.connection import get_connection
     from cuddly.db.migrations import apply_migrations
     from cuddly.db.schema import create_schema

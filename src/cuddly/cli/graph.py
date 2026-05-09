@@ -6,16 +6,15 @@ import typer
 from rich.console import Console
 from rich.tree import Tree
 
-app = typer.Typer(help="Explore the knowledge graph around a symbol.")
 console = Console()
 
 
-@app.callback(invoke_without_command=True)
 def graph(
-    symbol: str = typer.Argument(help="Function, class, or module name"),
+    symbol: str = typer.Argument(help="Function, class, or module name to explore"),
     depth: int = typer.Option(2, "--depth", "-d", help="Traversal depth"),
     rel: Optional[list[str]] = typer.Option(None, "--rel", help="Filter by edge type (e.g. IMPORTS CALLS)"),
 ) -> None:
+    """Explore the knowledge graph around a symbol."""
     from cuddly.config import get_config
     from cuddly.graph.builder import load_graph
     from cuddly.graph.traversal import graph_summary, subgraph

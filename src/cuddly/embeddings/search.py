@@ -35,12 +35,15 @@ def semantic_search(
     rows = conn.execute(
         """
         SELECT vc.chunk_id, vc.distance, c.start_line, c.end_line, c.text, f.path
-        FROM vec_chunks vc
+        FROM (
+            SELECT chunk_id, distance
+            FROM vec_chunks
+            WHERE embedding MATCH ?
+            LIMIT ?
+        ) vc
         JOIN chunks c ON c.id = vc.chunk_id
         JOIN files  f ON f.id = c.file_id
-        WHERE vc.embedding MATCH ?
         ORDER BY vc.distance
-        LIMIT ?
         """,
         (query_vec, top_k),
     ).fetchall()
